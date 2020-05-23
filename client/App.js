@@ -1,7 +1,13 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import Root from './components/Root'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Router } from 'react-router-dom';
+
+import Root from './components/Root';
+import History from './History';
 
 ReactDOM.render(
-    <Root />,
-  document.getElementById('app'))
+  <Router history={History}>
+    <Root />
+  </Router>,
+  document.getElementById('app')
+);
