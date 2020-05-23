@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../db');
 
-const Transaction = db.define('transaction', {
+const Trade = db.define('trade', {
   date: {
     type: Sequelize.DATE,
     allowNull: false,
@@ -18,4 +18,4 @@ const Transaction = db.define('transaction', {
   },
 });
 
-module.exports = Transaction;
+module.exports = Trade;

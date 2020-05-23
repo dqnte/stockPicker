@@ -1,11 +1,11 @@
 const User = require('./User');
-const Transaction = require('./Transaction');
+const Trade = require('./Trade');
 
 // Relationship Definitions
 
-User.hasMany(Transaction);
+User.hasMany(Trade);
 
 module.exports = {
   User,
-  Transaction,
+  Trade,
 };
