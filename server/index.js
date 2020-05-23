@@ -54,6 +54,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // API Routes
 app.use('/api', require('./api'));
+app.use('/auth', require('./auth'));
 
 // Route catchall
 app.get('*', function(req, res, next) {
@@ -69,4 +70,4 @@ const startListen = () =>
   });
 
 // Start App
-db.sync({ force: true }).then(startListen);
+db.sync().then(startListen);
