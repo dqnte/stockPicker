@@ -20,6 +20,7 @@ const User = db.define('user', {
 
     balance: {
       type: Sequelize.INTEGER,
+      defaultValue: 500000,
     },
   },
 });
