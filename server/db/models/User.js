@@ -14,15 +14,20 @@ const User = db.define('user', {
   password: {
     type: Sequelize.STRING,
     allowNull: false,
-    get() {
-      return this.getDataValue('password'); //hides password when converted to json
-    },
+  },
 
-    balance: {
-      type: Sequelize.INTEGER,
-      defaultValue: 500000,
-    },
+  balance: {
+    type: Sequelize.INTEGER,
+    defaultValue: 500000,
   },
 });
+
+// Removes password when sent to client
+User.prototype.toJSON = function() {
+  var values = Object.assign({}, this.get());
+
+  delete values.password;
+  return values;
+};
 
 module.exports = User;
