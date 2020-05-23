@@ -38,4 +38,4 @@ const startListen = () =>
   });
 
 // Start App
-db.sync().then(startListen);
+db.sync({ force: true }).then(startListen);
