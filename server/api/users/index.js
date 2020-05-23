@@ -3,7 +3,7 @@ const { User, Trade } = require('../../db');
 
 router.get('/', async (req, res, next) => {
   try {
-    const users = await User.findAll();
+    const users = await User.findAll({});
     res.json(users);
   } catch (err) {
     next(err);
