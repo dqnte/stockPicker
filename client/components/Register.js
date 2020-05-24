@@ -11,7 +11,7 @@ class Register extends React.Component {
 
   async handleSubmit(e) {
     e.preventDefault();
-    const { data } = await axios.post('/auth/register', {
+    const { data } = await axios.post('/auth/portfolio', {
       name: e.target.name.value,
       email: e.target.email.value,
       password: e.target.password.value,
