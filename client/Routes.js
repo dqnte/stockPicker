@@ -3,7 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 
 import Login from './components/Login';
 import Register from './components/Register';
-import Home from './components/Home';
+import Portfoilo from './components/Portfolio';
 
 const Routes = props => {
   const { user, setUser } = props;
@@ -17,7 +17,9 @@ const Routes = props => {
         <Route path="/register" render={() => <Register setUser={setUser} />} />
       )}
 
-      {isLoggedIn && <Route path="/home" render={() => <Home user={user} />} />}
+      {isLoggedIn && (
+        <Route path="/portfolio" render={() => <Portfoilo user={user} />} />
+      )}
     </Switch>
   );
 };
