@@ -1,5 +1,6 @@
+const axios = require('axios');
 const router = require('express').Router();
-const { User } = require('../db');
+const { User, PortfolioItem, Stock, Trade } = require('../db');
 
 router.post('/login', async (req, res, next) => {
   try {
@@ -37,8 +38,28 @@ router.post('/logout', (req, res) => {
 router.get('/me', async (req, res, next) => {
   try {
     if (req.user && req.user.id) {
-      const user = await User.findByPk(req.user.id);
-      res.send(user);
+      const user = await User.findByPk(req.user.id, {
+        include: [
+          { model: PortfolioItem, include: Stock },
+          { model: Trade, include: Stock },
+        ],
+      });
+
+      const items = await Promise.all(
+        user.portfolioItems.map(async item => {
+          const { data } = await axios.get(
+            `https://sandbox.iexapis.com/stable/stock/${item.stock.symbol}/book`,
+            {
+              params: {
+                token: process.env.IEX_TOKEN,
+              },
+            }
+          );
+          return { ...item.toJSON(), stock: data.quote };
+        })
+      );
+
+      res.send({ ...user.toJSON(), portfolioItems: items });
     } else {
       res.send({});
     }
