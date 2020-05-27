@@ -19,7 +19,6 @@ class Portfoilo extends React.Component {
 
   render() {
     const { user } = this.props;
-    console.log(user);
     var portfolioSum;
     if (user.portfolioItems) {
       portfolioSum = user.portfolioItems.reduce((total, item) => {
