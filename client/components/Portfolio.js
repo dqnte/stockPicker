@@ -1,12 +1,33 @@
 import React from 'react';
+import axios from 'axios';
 
 class Portfoilo extends React.Component {
+  constructor() {
+    super();
+    this.submitBuy = this.submitBuy.bind(this);
+  }
+
+  async submitBuy(e) {
+    e.preventDefault();
+    const body = {
+      symbol: e.target.symbol.value,
+      quantity: e.target.quantity.value,
+    };
+    const { data } = await axios.post('/api/users/buy', body);
+    this.props.setUser(data);
+  }
+
   render() {
     const { user } = this.props;
-
-    const portfolioSum = user.portfolioItems.reduce((total, item) => {
-      return item.stock.latestPrice * item.quantity + total;
-    }, 0);
+    console.log(user);
+    var portfolioSum;
+    if (user.portfolioItems) {
+      portfolioSum = user.portfolioItems.reduce((total, item) => {
+        return item.stock.latestPrice * item.quantity + total;
+      }, 0);
+    } else {
+      portfolioSum = 0;
+    }
     return (
       <React.Fragment>
         <div id="portfolio">
@@ -22,7 +43,17 @@ class Portfoilo extends React.Component {
         </div>
         <div id="Purchase">
           <h3>Cash ${user.balance / 100}</h3>
-          <form></form>
+          <form onSubmit={this.submitBuy}>
+            <label htmlFor="symbol">
+              <small>Symbol</small>
+            </label>
+            <input name="symbol" type="text" required />
+            <label htmlFor="quantity">
+              <small>Quantity</small>
+            </label>
+            <input name="quantity" type="number" required />
+            <button type="submit">Buy</button>
+          </form>
         </div>
       </React.Fragment>
     );
