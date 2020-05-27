@@ -67,6 +67,7 @@ router.post('/buy', async (req, res, next) => {
           date: Date.now(),
           type: 'buy',
           numChange: quantity,
+          askingPrice: Math.floor(data * 100),
           stockId: stock.id,
           userId: req.user.id,
         });
