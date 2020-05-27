@@ -16,6 +16,10 @@ const Trade = db.define('trade', {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
+  askingPrice: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
 });
 
 module.exports = Trade;
