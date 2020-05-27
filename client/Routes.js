@@ -18,7 +18,10 @@ const Routes = props => {
       )}
 
       {isLoggedIn && (
-        <Route path="/portfolio" render={() => <Portfoilo user={user} />} />
+        <Route
+          path="/portfolio"
+          render={() => <Portfoilo user={user} setUser={setUser} />}
+        />
       )}
     </Switch>
   );
