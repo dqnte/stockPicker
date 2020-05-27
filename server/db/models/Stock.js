@@ -8,4 +8,13 @@ const Stock = db.define('stock', {
   },
 });
 
+// Set Stock string to all caps
+Stock.beforeCreate(stock => {
+  stock.symbol = stock.symbol.toUpperCase();
+});
+
+Stock.beforeUpdate(stock => {
+  stock.symbol = stock.symbol.toUpperCase();
+});
+
 module.exports = Stock;

@@ -1,11 +1,12 @@
+const axios = require('axios');
 const router = require('express').Router();
-const { User } = require('../db');
+const { User, PortfolioItem, Stock, Trade } = require('../db');
 
 router.post('/login', async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { email: req.body.email } });
     if (user && user.correctPassword(req.body.password)) {
-      req.login(user, err => (err ? next(err) : res.json(user)));
+      req.login(user, err => (err ? next(err) : res.redirect('/auth/me')));
     } else {
       res.status(401).send('Wrong username and/or password');
     }
@@ -20,8 +21,8 @@ router.post('/register', async (req, res, next) => {
     if (user) {
       res.status(401).send('User already exists');
     } else {
-      user = await User.create(req.body);
-      res.send(user);
+      await User.create(req.body);
+      req.login(user, err => (err ? next(err) : res.redirect('/auth/me')));
     }
   } catch (err) {
     next(err);
@@ -37,8 +38,28 @@ router.post('/logout', (req, res) => {
 router.get('/me', async (req, res, next) => {
   try {
     if (req.user && req.user.id) {
-      const user = await User.findByPk(req.user.id);
-      res.send(user);
+      const user = await User.findByPk(req.user.id, {
+        include: [
+          { model: PortfolioItem, include: Stock },
+          { model: Trade, include: Stock },
+        ],
+      });
+
+      const items = await Promise.all(
+        user.portfolioItems.map(async item => {
+          const { data } = await axios.get(
+            `https://sandbox.iexapis.com/stable/stock/${item.stock.symbol}/book`,
+            {
+              params: {
+                token: process.env.IEX_TOKEN,
+              },
+            }
+          );
+          return { ...item.toJSON(), stock: data.quote };
+        })
+      );
+
+      res.send({ ...user.toJSON(), portfolioItems: items });
     } else {
       res.send({});
     }

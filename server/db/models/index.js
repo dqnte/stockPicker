@@ -11,6 +11,7 @@ User.hasMany(Trade);
 // Portfolio Item
 User.hasMany(PortfolioItem);
 Stock.hasMany(PortfolioItem);
+PortfolioItem.belongsTo(Stock);
 
 // Trade
 Trade.belongsTo(Stock);

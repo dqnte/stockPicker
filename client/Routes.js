@@ -8,16 +8,25 @@ import Home from './components/Home';
 const Routes = props => {
   const { user, setUser } = props;
   const isLoggedIn = user && user.id;
+
+  const unAuthedRoutes = (
+    <React.Fragment>
+      <Route key={1} path="/login" render={() => <Login setUser={setUser} />} />
+      <Route
+        key={2}
+        path="/register"
+        render={() => <Register setUser={setUser} />}
+      />
+      <Route key={3} path="/" render={() => <Login setUser={setUser} />} />
+    </React.Fragment>
+  );
+
   return (
     <Switch>
-      {!isLoggedIn && (
-        <Route path="/login" render={() => <Login setUser={setUser} />} />
+      {!isLoggedIn && unAuthedRoutes}
+      {isLoggedIn && (
+        <Route key={4} render={() => <Home user={user} setUser={setUser} />} />
       )}
-      {!isLoggedIn && (
-        <Route path="/register" render={() => <Register setUser={setUser} />} />
-      )}
-
-      {isLoggedIn && <Route path="/home" render={() => <Home user={user} />} />}
     </Switch>
   );
 };
