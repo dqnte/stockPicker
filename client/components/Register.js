@@ -19,7 +19,7 @@ class Register extends React.Component {
 
     if (data.id) {
       this.props.setUser(data);
-      this.props.history.push('/home');
+      this.props.history.push('/');
     }
   }
 
