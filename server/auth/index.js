@@ -21,7 +21,7 @@ router.post('/register', async (req, res, next) => {
     if (user) {
       res.status(401).send('User already exists');
     } else {
-      await User.create(req.body);
+      user = await User.create(req.body);
       req.login(user, err => (err ? next(err) : res.redirect('/auth/me')));
     }
   } catch (err) {
@@ -46,23 +46,29 @@ router.get('/me', async (req, res, next) => {
       });
 
       const baseURL = `https://sandbox.iexapis.com/stable/stock/market/batch`;
-      const { data } = await axios.get(baseURL, {
-        params: {
-          symbols: user.portfolioItems.map(item => item.stock.symbol).join(','),
-          types: 'quote',
-          token: process.env.IEX_TOKEN,
-        },
-      });
 
-      const items = user.portfolioItems.map(item => {
-        return {
-          id: item.id,
-          quantity: item.quantity,
-          stock: data[item.stock.symbol].quote,
-        };
-      });
+      if (user.portfolioItems.length > 0) {
+        const { data } = await axios.get(baseURL, {
+          params: {
+            symbols: user.portfolioItems
+              .map(item => item.stock.symbol)
+              .join(','),
+            types: 'quote',
+            token: process.env.IEX_TOKEN,
+          },
+        });
 
-      res.send({ ...user.toJSON(), portfolioItems: items });
+        const items = user.portfolioItems.map(item => {
+          return {
+            id: item.id,
+            quantity: item.quantity,
+            stock: data[item.stock.symbol].quote,
+          };
+        });
+        res.send({ ...user.toJSON(), portfolioItems: items });
+      } else {
+        res.send(user);
+      }
     } else {
       res.send({});
     }
