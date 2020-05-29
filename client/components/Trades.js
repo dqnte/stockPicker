@@ -1,17 +1,24 @@
 import React from 'react';
 
+import './trades.scss';
+
 const Trades = props => {
-  console.log(props.user);
   return (
     <div id="trades">
-      <h2>Trades</h2>
-      {props.user.trades.map(trade => {
-        return (
-          <h5 key={trade.id}>
-            {trade.stock.symbol} - {trade.numChange} @ {trade.askingPrice / 100}
-          </h5>
-        );
-      })}
+      <div className="header">
+        <span className="title">Trades</span>
+      </div>
+      <ul className="trade-list">
+        {props.user.trades.map(trade => {
+          return (
+            <li key={trade.id} className="trade-item">
+              ({trade.type.toUpperCase()}) {trade.stock.symbol} -{' '}
+              {trade.numChange} @{' '}
+              <span>{(trade.askingPrice / 100).toFixed(2)}</span>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 };
