@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
+import './portfolio.scss';
 class Portfoilo extends React.Component {
   constructor() {
     super();
@@ -27,34 +28,69 @@ class Portfoilo extends React.Component {
     } else {
       portfolioSum = 0;
     }
+
     return (
-      <React.Fragment>
-        <div id="portfolio">
-          <h3>{user.name}</h3>
-          <h3>Portfoilo: {portfolioSum}</h3>
-          {user.portfolioItems &&
-            user.portfolioItems.map(item => (
-              <h3 key={item.id}>
-                {item.stock.symbol} - {item.quantity} Shares -{' '}
-                {Math.floor(item.stock.latestPrice, -2)}
-              </h3>
-            ))}
+      <div id="portfolio">
+        <div id="items">
+          <div className="header">
+            <span className="title">Portfoilo:</span>{' '}
+            <span className="total">
+              $(
+              {portfolioSum.toFixed(2)})
+            </span>
+          </div>
+          <ul className="stock-list">
+            {user.portfolioItems &&
+              user.portfolioItems.map(item => {
+                let className;
+
+                if (
+                  item.stock.open === null ||
+                  item.stock.open === item.stock.latestPrice
+                ) {
+                  className = '';
+                } else if (item.stock.latestPrice > item.stock.open) {
+                  className = 'gain';
+                } else {
+                  className = 'loss';
+                }
+
+                return (
+                  <li key={item.id} className="portfolio-item">
+                    {item.stock.symbol} - {item.quantity} Shares
+                    <span className={className}>
+                      {(item.stock.latestPrice * item.quantity).toFixed(2)}
+                    </span>
+                  </li>
+                );
+              })}
+          </ul>
         </div>
-        <div id="Purchase">
-          <h3>Cash ${user.balance / 100}</h3>
+        <div id="purchase">
+          <div className="header">
+            <span className="title">Cash:</span>{' '}
+            <span className="total">${(user.balance / 100).toFixed(2)}</span>
+          </div>
           <form onSubmit={this.submitBuy}>
-            <label htmlFor="symbol">
-              <small>Symbol</small>
-            </label>
-            <input name="symbol" type="text" required />
-            <label htmlFor="quantity">
-              <small>Quantity</small>
-            </label>
-            <input name="quantity" type="number" required />
+            <input
+              name="symbol"
+              className="symbol"
+              type="text"
+              placeholder="Symbol"
+              required
+            />
+
+            <input
+              name="quantity"
+              className="quantity"
+              type="number"
+              placeholder="Amount"
+              required
+            />
             <button type="submit">Buy</button>
           </form>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }
