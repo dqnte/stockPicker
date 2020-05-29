@@ -5,17 +5,25 @@ import './portfolio.scss';
 class Portfoilo extends React.Component {
   constructor() {
     super();
+    this.state = { symbol: '', quantity: '' };
     this.submitBuy = this.submitBuy.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
   }
 
   async submitBuy(e) {
     e.preventDefault();
     const body = {
-      symbol: e.target.symbol.value,
-      quantity: e.target.quantity.value,
+      symbol: this.state.symbol,
+      quantity: this.state.quantity,
     };
+
     const { data } = await axios.post('/api/users/buy', body);
     this.props.setUser(data);
+    this.setState({ symbol: '', quantity: '' });
   }
 
   render() {
@@ -29,6 +37,41 @@ class Portfoilo extends React.Component {
       portfolioSum = 0;
     }
 
+    var list;
+    if (user.portfolioItems.length === 0) {
+      list = (
+        <div className="empty-tag">You have no stocks in your portfolio...</div>
+      );
+    } else {
+      list = (
+        <ul className="stock-list">
+          {user.portfolioItems &&
+            user.portfolioItems.map(item => {
+              let className;
+
+              if (
+                item.stock.open === null ||
+                item.stock.open === item.stock.latestPrice
+              ) {
+                className = '';
+              } else if (item.stock.latestPrice > item.stock.open) {
+                className = 'gain';
+              } else {
+                className = 'loss';
+              }
+
+              return (
+                <li key={item.id} className="portfolio-item">
+                  {item.stock.symbol} - {item.quantity} Shares
+                  <span className={className}>
+                    {(item.stock.latestPrice * item.quantity).toFixed(2)}
+                  </span>
+                </li>
+              );
+            })}
+        </ul>
+      );
+    }
     return (
       <div id="portfolio">
         <div id="items">
@@ -39,32 +82,7 @@ class Portfoilo extends React.Component {
               {portfolioSum.toFixed(2)})
             </span>
           </div>
-          <ul className="stock-list">
-            {user.portfolioItems &&
-              user.portfolioItems.map(item => {
-                let className;
-
-                if (
-                  item.stock.open === null ||
-                  item.stock.open === item.stock.latestPrice
-                ) {
-                  className = '';
-                } else if (item.stock.latestPrice > item.stock.open) {
-                  className = 'gain';
-                } else {
-                  className = 'loss';
-                }
-
-                return (
-                  <li key={item.id} className="portfolio-item">
-                    {item.stock.symbol} - {item.quantity} Shares
-                    <span className={className}>
-                      {(item.stock.latestPrice * item.quantity).toFixed(2)}
-                    </span>
-                  </li>
-                );
-              })}
-          </ul>
+          {list}
         </div>
         <div id="purchase">
           <div className="header">
@@ -78,14 +96,17 @@ class Portfoilo extends React.Component {
               type="text"
               placeholder="Symbol"
               required
+              value={this.state.symbol}
+              onChange={this.handleChange}
             />
-
             <input
               name="quantity"
               className="quantity"
               type="number"
               placeholder="Amount"
               required
+              value={this.state.quantity}
+              onChange={this.handleChange}
             />
             <button type="submit">Buy</button>
           </form>

@@ -3,11 +3,11 @@ import React from 'react';
 import './trades.scss';
 
 const Trades = props => {
-  return (
-    <div id="trades">
-      <div className="header">
-        <span className="title">Trades</span>
-      </div>
+  var list;
+  if (props.user.trades.length === 0) {
+    list = <div className="empty-tag">You have not made any trades yet...</div>;
+  } else {
+    list = (
       <ul className="trade-list">
         {props.user.trades.map(trade => {
           return (
@@ -19,6 +19,15 @@ const Trades = props => {
           );
         })}
       </ul>
+    );
+  }
+
+  return (
+    <div id="trades">
+      <div className="header">
+        <span className="title">Trades</span>
+      </div>
+      {list}
     </div>
   );
 };
