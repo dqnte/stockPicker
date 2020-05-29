@@ -45,19 +45,22 @@ router.get('/me', async (req, res, next) => {
         ],
       });
 
-      const items = await Promise.all(
-        user.portfolioItems.map(async item => {
-          const { data } = await axios.get(
-            `https://sandbox.iexapis.com/stable/stock/${item.stock.symbol}/book`,
-            {
-              params: {
-                token: process.env.IEX_TOKEN,
-              },
-            }
-          );
-          return { ...item.toJSON(), stock: data.quote };
-        })
-      );
+      const baseURL = `https://sandbox.iexapis.com/stable/stock/market/batch`;
+      const { data } = await axios.get(baseURL, {
+        params: {
+          symbols: user.portfolioItems.map(item => item.stock.symbol).join(','),
+          types: 'quote',
+          token: process.env.IEX_TOKEN,
+        },
+      });
+
+      const items = user.portfolioItems.map(item => {
+        return {
+          id: item.id,
+          quantity: item.quantity,
+          stock: data[item.stock.symbol].quote,
+        };
+      });
 
       res.send({ ...user.toJSON(), portfolioItems: items });
     } else {
