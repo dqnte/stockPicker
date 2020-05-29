@@ -1,0 +1,73 @@
+#portfolio {
+  display: flex;
+
+  #items,
+  #purchase {
+    width: 50vw;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stock-list {
+    span {
+      color: grey;
+    }
+
+    span.gain {
+      color: green;
+    }
+
+    span.loss {
+      color: red;
+    }
+  }
+}
+
+#purchase {
+  align-items: center;
+
+  form {
+    width: 60%;
+  }
+
+  input {
+    margin: 5px;
+    padding: 10px;
+    border-radius: 2px;
+    border: 1px solid rgb(205, 205, 205);
+  }
+
+  input:focus {
+    border: 1px solid #1db954;
+    outline: none;
+
+    transition: border 0.3s;
+  }
+
+  input.symbol {
+    width: 100%;
+  }
+
+  input.quantity {
+    width: 100%;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+    margin: 5px;
+    border: none;
+    background-color: #1db954;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 2px;
+
+    transition: background-color 0.2s;
+  }
+
+  button:hover {
+    background-color: #21ce5e;
+    transition: background-color 0.2s;
+  }
+}

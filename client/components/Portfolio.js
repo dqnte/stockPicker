@@ -1,62 +1,77 @@
 import React from 'react';
-import axios from 'axios';
 
-class Portfoilo extends React.Component {
-  constructor() {
-    super();
-    this.submitBuy = this.submitBuy.bind(this);
+import Purchase from './Purchase';
+
+import './portfolio.scss';
+const Portfoilo = props => {
+  const { user } = props;
+
+  // Calcluate sum of stocks in portfolio
+  var portfolioSum;
+  if (user.portfolioItems) {
+    portfolioSum = user.portfolioItems.reduce((total, item) => {
+      return item.stock.latestPrice * item.quantity + total;
+    }, 0);
+  } else {
+    portfolioSum = 0;
   }
 
-  async submitBuy(e) {
-    e.preventDefault();
-    const body = {
-      symbol: e.target.symbol.value,
-      quantity: e.target.quantity.value,
-    };
-    const { data } = await axios.post('/api/users/buy', body);
-    this.props.setUser(data);
-  }
+  // Conditionally render list of stocks or empty message
+  var listOfStocks;
+  if (user.portfolioItems.length === 0) {
+    // Empty message
+    listOfStocks = (
+      <div className="empty-tag">You have no stocks in your portfolio...</div>
+    );
+  } else {
+    // Stock list
+    listOfStocks = (
+      <ul className="stock-list">
+        {user.portfolioItems &&
+          user.portfolioItems.map(item => {
+            let className;
 
-  render() {
-    const { user } = this.props;
-    var portfolioSum;
-    if (user.portfolioItems) {
-      portfolioSum = user.portfolioItems.reduce((total, item) => {
-        return item.stock.latestPrice * item.quantity + total;
-      }, 0);
-    } else {
-      portfolioSum = 0;
-    }
-    return (
-      <React.Fragment>
-        <div id="portfolio">
-          <h3>{user.name}</h3>
-          <h3>Portfoilo: {portfolioSum}</h3>
-          {user.portfolioItems &&
-            user.portfolioItems.map(item => (
-              <h3 key={item.id}>
-                {item.stock.symbol} - {item.quantity} Shares -{' '}
-                {Math.floor(item.stock.latestPrice, -2)}
-              </h3>
-            ))}
-        </div>
-        <div id="Purchase">
-          <h3>Cash ${user.balance / 100}</h3>
-          <form onSubmit={this.submitBuy}>
-            <label htmlFor="symbol">
-              <small>Symbol</small>
-            </label>
-            <input name="symbol" type="text" required />
-            <label htmlFor="quantity">
-              <small>Quantity</small>
-            </label>
-            <input name="quantity" type="number" required />
-            <button type="submit">Buy</button>
-          </form>
-        </div>
-      </React.Fragment>
+            // Conditionally set class to reflect stock performance
+            if (
+              item.stock.open === null ||
+              item.stock.open === item.stock.latestPrice
+            ) {
+              className = '';
+            } else if (item.stock.latestPrice > item.stock.open) {
+              className = 'gain';
+            } else {
+              className = 'loss';
+            }
+
+            return (
+              <li key={item.id} className="portfolio-item">
+                {item.stock.symbol} - {item.quantity} Shares
+                <span className={className}>
+                  {(item.stock.latestPrice * item.quantity).toFixed(2)}
+                </span>
+              </li>
+            );
+          })}
+      </ul>
     );
   }
-}
+
+  return (
+    <div id="portfolio">
+      <div id="items">
+        <div className="header">
+          <span className="title">Portfoilo:</span>{' '}
+          <span className="total">
+            $(
+            {portfolioSum.toFixed(2)})
+          </span>
+        </div>
+        {/* List of stocks or empty message depending on length of portfolio */}
+        {listOfStocks}
+      </div>
+      <Purchase setUser={props.setUser} user={user} />
+    </div>
+  );
+};
 
 export default Portfoilo;

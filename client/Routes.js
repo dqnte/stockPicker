@@ -6,7 +6,7 @@ import Register from './components/Register';
 import Home from './components/Home';
 
 const Routes = props => {
-  const { user, setUser } = props;
+  const { user, setUser, logout } = props;
   const isLoggedIn = user && user.id;
 
   const unAuthedRoutes = (
@@ -17,7 +17,12 @@ const Routes = props => {
         path="/register"
         render={() => <Register setUser={setUser} />}
       />
-      <Route key={3} path="/" render={() => <Login setUser={setUser} />} />
+      <Route
+        key={3}
+        exact
+        path="/"
+        render={() => <Login setUser={setUser} />}
+      />
     </React.Fragment>
   );
 
@@ -25,7 +30,10 @@ const Routes = props => {
     <Switch>
       {!isLoggedIn && unAuthedRoutes}
       {isLoggedIn && (
-        <Route key={4} render={() => <Home user={user} setUser={setUser} />} />
+        <Route
+          key={4}
+          render={() => <Home user={user} setUser={setUser} logout={logout} />}
+        />
       )}
     </Switch>
   );
