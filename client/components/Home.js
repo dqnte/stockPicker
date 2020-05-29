@@ -30,18 +30,17 @@ class Home extends React.Component {
     return (
       <div id="home">
         <div id="topbar">
-          <a className="logout" onClick={() => this.props.logout()}>
-            logout
-          </a>
+          <div className="viewChoice">
+            <span onClick={() => this.changeView(0, 'portfolio')}>
+              PORTFOLIO
+            </span>
+            <span onClick={() => this.changeView(1, 'trades')}>TRADES</span>
+            <span className="logout" onClick={() => this.props.logout()}>
+              LOGOUT
+            </span>
+          </div>
         </div>
-        <div className="viewChoice">
-          <span type="button" onClick={() => this.changeView(0, 'portfolio')}>
-            Portfolio
-          </span>
-          <span type="button" onClick={() => this.changeView(1, 'trades')}>
-            Trades
-          </span>
-        </div>
+
         {view === 0 && (
           <Portolio user={this.props.user} setUser={this.props.setUser} />
         )}
